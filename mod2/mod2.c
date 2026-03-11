@@ -52,7 +52,7 @@ int main() {
 
         //processamento da opcao
         switch (opcao) {
-            case 1: //cadastro de livro
+            case 1: //cadastro de livro7
                 printf("***CADASTRO DE NOVO LIVRO***\n\n");
 
                 if (totalLivros < MAX_LIVROS) {

@@ -99,44 +99,87 @@ void limpa_buffer()
 int main()
 {
     struct territorio territorios[MAX_TERRITORIOS];
-    int territorios = 0;
-    int i;
+    int totalCadastrados = 0;           // contador de territórios já gravados
+    int opcao;
 
-    //laco principal menu
+    // laço principal com menu de opções
     do {
-        //exibe menu de opcoes
+        // exibe menu de opções
         printf("----------------------------------------\n");
         printf("1. Cadastrar territorio\n");
         printf("2. Exibir territorios\n");
         printf("3. Sair\n");
         printf("----------------------------------------\n");
-        printf("Escolha uma opcao: "); 
-    }
-    
-    //le opcao do usuario
-    scanf("%d", &i);
-    limpa_buffer(); //limpa o '\n' deixado pelo scanf
+        printf("Escolha uma opcao: ");
 
-    //processamento da opcao
-    switch (i)
-    {
-        case 1: //cadastro de territorio
-        
-    }
+        // lê a opção do usuário
+        if (scanf("%d", &opcao) != 1) {
+            limpa_buffer();
+            opcao = -1; // força case default
+        }
+        limpa_buffer(); // limpa o '\n' deixado pelo scanf
 
-    
+        // processamento da opção
+        switch (opcao)
+        {
+            case 1: // cadastro de territorio
+                if (totalCadastrados < MAX_TERRITORIOS)
+                {
+                    printf("Digite o nome do territorio: Exemplo 'Europa'\n");
+                    fgets(territorios[totalCadastrados].nome,
+                          sizeof(territorios[totalCadastrados].nome),
+                          stdin);
+                    printf("Digite a cor do exército: Exemplo 'Azul'\n");
+                    fgets(territorios[totalCadastrados].cor,
+                          sizeof(territorios[totalCadastrados].cor),
+                          stdin);
+                    printf("Digite o número de tropas: Exemplo '1000'\n");
+                    scanf("%d", &territorios[totalCadastrados].tropas);
+                    limpa_buffer();
 
+                    // remover nova linha deixada por fgets
+                    territorios[totalCadastrados].nome[
+                        strcspn(territorios[totalCadastrados].nome, "\n")
+                    ] = '\0';
+                    territorios[totalCadastrados].cor[
+                        strcspn(territorios[totalCadastrados].cor, "\n")
+                    ] = '\0';
 
+                    totalCadastrados++;
+                    printf("Território cadastrado com sucesso!\n");
+                }
+                else
+                {
+                    printf("Número máximo de territórios atingido.\n");
+                }
+                break;
 
+            case 2: // exibir territorios
+                if (totalCadastrados == 0) {
+                    printf("Nenhum território cadastrado.\n");
+                } else {
+                    printf("Territórios cadastrados:\n");
+                    for (int j = 0; j < totalCadastrados; j++)
+                    {
+                        printf("Território %d:\n", j + 1);
+                        printf("Nome: %s\n", territorios[j].nome);
+                        printf("Cor do exército: %s\n", territorios[j].cor);
+                        printf("Número de tropas: %d\n", territorios[j].tropas);
+                        printf("-----------------------------\n");
+                    }
+                }
+                break;
 
-    
+            case 3: // sair
+                printf("Saindo do programa...\n");
+                break;
 
-    //entrada de dados
+            default: // opção inválida
+                printf("Opção inválida, tente novamente.\n");
+                break;
+        }
 
-    for ( int i = 0; i < MAX_TERRITORIOS; i++)
+    } while (opcao != 3);
 
-    {
-
-    }
-    
+    return 0;
 }
