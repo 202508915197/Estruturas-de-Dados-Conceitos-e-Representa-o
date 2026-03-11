@@ -94,3 +94,22 @@ void limpa_buffer()
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
+//funcao principal
+
+int main()
+{
+    struct territorio territorios[MAX_TERRITORIOS];
+    int territorios = 0;
+    int i;
+
+    
+
+    //entrada de dados
+
+    for ( int i = 0; i < MAX_TERRITORIOS; i++)
+
+    {
+
+    }
+    
+}
