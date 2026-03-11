@@ -104,8 +104,31 @@ int main()
 
     //laco principal menu
     do {
+        //exibe menu de opcoes
+        printf("----------------------------------------\n");
+        printf("1. Cadastrar territorio\n");
+        printf("2. Exibir territorios\n");
+        printf("3. Sair\n");
+        printf("----------------------------------------\n");
+        printf("Escolha uma opcao: "); 
+    }
+    
+    //le opcao do usuario
+    scanf("%d", &i);
+    limpa_buffer(); //limpa o '\n' deixado pelo scanf
+
+    //processamento da opcao
+    switch (i)
+    {
+        case 1: //cadastro de territorio
         
     }
+
+    
+
+
+
+
     
 
     //entrada de dados
