@@ -102,6 +102,10 @@ int main()
     int territorios = 0;
     int i;
 
+    //laco principal menu
+    do {
+        
+    }
     
 
     //entrada de dados
