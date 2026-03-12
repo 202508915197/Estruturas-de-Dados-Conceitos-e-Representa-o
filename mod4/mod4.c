@@ -21,6 +21,9 @@ Alocação e desalocação dinâmica de memória
 //funcao free
 // free(vetor);
 
+
+/* com erro
+
 int main()
 {
 
@@ -31,6 +34,25 @@ a=(int*) malloc(sizeof(int)); // pedido de memoria
 a = &b; 
 free(a);
 
-return 0
+return 0;
+
+}
+
+*/
+
+//sem erro
+
+int main()
+{
+
+int *a;
+int b;
+a = malloc(sizeof(int)); // pedido de memoria
+a=(int*) malloc(sizeof(int)); // pedido de memoria
+*a = 20;
+free(a);
+a = &b; 
+
+return 0;
 
 }
