@@ -38,7 +38,17 @@ struct emprestimo {
 void limparBuffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF) {}
-}   
+}
+
+//funcao para limpar a tela
+void limparTela() {
+    system("clear");
+}
+
+//funcao para imprimir separador visual
+void imprimirSeparador() {
+    printf("\n================================================\n\n");
+}
 
 //funcao principal
 
@@ -61,12 +71,15 @@ int main() {
     int opcao;
 
     do {
-        printf("Menu:\n");
+        limparTela();
+        printf("================================================\n");
+        printf("            SISTEMA DE BIBLIOTECA\n");
+        printf("================================================\n\n");
         printf("1. Cadastrar livro\n");
         printf("2. Listar livros cadastrados\n");
         printf("3. Realizar empréstimo\n");
         printf("4. Listar empréstimos realizados\n");
-        printf("5. Sair\n");
+        printf("5. Sair\n\n");
         printf("Escolha uma opção: ");
         scanf("%d", &opcao);
         limparBuffer(); // limpa o buffer após ler a opção
@@ -74,6 +87,9 @@ int main() {
         switch (opcao) {
             //cadastro de livro
             case 1:
+                imprimirSeparador();
+                printf("         CADASTRO DE NOVO LIVRO\n");
+                imprimirSeparador();
                 if (totalLivros < MAX_LIVROS) {
                     printf("Digite o nome do livro: ");
                     fgets(biblioteca[totalLivros].nome, TAM_STRING, stdin);
@@ -93,42 +109,73 @@ int main() {
 
                     biblioteca[totalLivros].disponivel = 1; // marca o livro como disponível
                     totalLivros++;
+                    printf("\n✓ Livro cadastrado com sucesso!\n");
+                    imprimirSeparador();
+                    printf("Pressione ENTER para continuar...\n");
+                    getchar();
                 } else {
                     printf("Capacidade máxima de livros atingida.\n");
-                    limparBuffer(); // limpa o buffer após tentar cadastrar um livro além da capacidade
+                    imprimirSeparador();
+                    printf("Pressione ENTER para continuar...\n");
+                    getchar();
                 }
                 break;
 
             //listagem de livros
             case 2:
+                imprimirSeparador();
+                printf("       LIVROS DISPONÍVEIS PARA EMPRÉSTIMO\n");
+                imprimirSeparador();
                 if (totalLivros == 0) {
                     printf("Nenhum livro cadastrado.\n");
+                    imprimirSeparador();
                 } else {
-                    printf("Livros disponíveis para empréstimo:\n");
                     for (int i = 0; i < totalLivros; i++) {
                         if (biblioteca[i].disponivel) {
-                            printf("%d. %s por %s (%s, edição %d)\n", i + 1, biblioteca[i].nome, biblioteca[i].autor, biblioteca[i].editora, biblioteca[i].edicao);
+                            printf("[%d] %s\n", i + 1, biblioteca[i].nome);
+                            printf("    Autor: %s\n", biblioteca[i].autor);
+                            printf("    Editora: %s | Edição: %d\n", biblioteca[i].editora, biblioteca[i].edicao);
+                            printf("    Status: Disponível\n\n");
                         }
                     }
-                    limparBuffer(); // limpa o buffer após listar os livros
+                    imprimirSeparador();
                 }
-                break;
+                printf("Pressione ENTER para continuar...\n");
+                getchar();
 
             // realização de empréstimo
             case 3:
+                imprimirSeparador();
+                printf("          REALIZAR EMPRÉSTIMO DE LIVRO\n");
+                imprimirSeparador();
                 if (totalLivros == 0) {
                     printf("Nenhum livro cadastrado para empréstimo.\n");
+                    imprimirSeparador();
+                    printf("Pressione ENTER para continuar...\n");
+                    getchar();
                 } else if (totalEmprestimos >= MAX_EMPRESTIMOS) {
                     printf("Capacidade máxima de empréstimos atingida.\n");
+                    imprimirSeparador();
+                    printf("Pressione ENTER para continuar...\n");
+                    getchar();
                 } else {
+                    printf("Livros disponíveis:\n\n");
+                    for (int i = 0; i < totalLivros; i++) {
+                        if (biblioteca[i].disponivel) {
+                            printf("[%d] %s - %s\n", i + 1, biblioteca[i].nome, biblioteca[i].autor);
+                        }
+                    }
+                    printf("\n");
                     int indiceLivro;
                     printf("Digite o número do livro que deseja emprestar: ");
                     scanf("%d", &indiceLivro);
                     limparBuffer(); // limpa o buffer após ler o índice
                     if (indiceLivro < 1 || indiceLivro > totalLivros) {
-                        printf("Índice de livro inválido.\n");
+                        printf("\n✗ Índice de livro inválido.\n");
+                        imprimirSeparador();
                     } else if (!biblioteca[indiceLivro - 1].disponivel) {
-                        printf("Livro indisponível para empréstimo.\n");
+                        printf("\n✗ Livro indisponível para empréstimo.\n");
+                        imprimirSeparador();
                     } else {
                         printf("Digite o nome do usuário: ");
                         fgets(emprestimos[totalEmprestimos].nomeUsuario, TAM_STRING, stdin);
@@ -137,32 +184,45 @@ int main() {
                         emprestimos[totalEmprestimos].indicelivro = indiceLivro - 1; // armazena o índice do livro emprestado
                         biblioteca[indiceLivro - 1].disponivel = 0; // marca o livro como emprestado
                         totalEmprestimos++;
+                        printf("\n✓ Empréstimo realizado com sucesso!\n");
+                        imprimirSeparador();
                     }
-                    limparBuffer(); // limpa o buffer após ler o nome do usuário
+                    printf("Pressione ENTER para continuar...\n");
+                    getchar();
                 }
-                break;
 
             //listagem de empréstimos
             case 4:
+                imprimirSeparador();
+                printf("        EMPRÉSTIMOS REALIZADOS\n");
+                imprimirSeparador();
                 if (totalEmprestimos == 0) {
                     printf("Nenhum empréstimo realizado.\n");
+                    imprimirSeparador();
                 } else {
-                    printf("Empréstimos realizados:\n");
                     for (int i = 0; i < totalEmprestimos; i++) {
                         int indiceLivro = emprestimos[i].indicelivro;
-                        printf("%d. %s emprestado para %s\n", i + 1, biblioteca[indiceLivro].nome, emprestimos[i].nomeUsuario);
+                        printf("[%d] Livro: %s\n", i + 1, biblioteca[indiceLivro].nome);
+                        printf("    Emprestado para: %s\n\n", emprestimos[i].nomeUsuario);
                     }
-                    limparBuffer(); // limpa o buffer após listar os empréstimos
+                    imprimirSeparador();
                 }
-                break;
+                printf("Pressione ENTER para continuar...\n");
+                getchar();
 
             // opção para sair do programa
             case 5:
-                printf("Saindo do programa...\n");
+                imprimirSeparador();
+                printf("        Obrigado por usar o Sistema de Biblioteca!\n");
+                imprimirSeparador();
                 break;
 
             default:
-                printf("Opção inválida.\n");
+                imprimirSeparador();
+                printf("✗ Opção inválida. Escolha entre 1 e 5.\n");
+                imprimirSeparador();
+                printf("Pressione ENTER para continuar...\n");
+                getchar();
                 break;
         }
 
