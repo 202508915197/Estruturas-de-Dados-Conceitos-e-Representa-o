@@ -1,0 +1,5 @@
+Partida Salva
+asia - Cor: vermelho, Tropas: 5
+america - Cor: vermelho, Tropas: 5
+oceania - Cor: vermelho, Tropas: 2
+europa - Cor: vermelho, Tropas: 2
