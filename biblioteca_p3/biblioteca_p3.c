@@ -168,6 +168,7 @@ void liberarMemoria(struct livro *biblioteca, struct emprestimo *emprestimos)
 {
     free(biblioteca);
     free(emprestimos);
+    printf("Memória liberada com sucesso.\n");
 }
 
 //protótipos de funções 
