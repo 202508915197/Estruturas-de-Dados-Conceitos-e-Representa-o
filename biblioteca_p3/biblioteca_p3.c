@@ -53,7 +53,7 @@ void limparTela()
 // funcao para imprimir separador visual
 void imprimirSeparador()
 {
-    printf("\n================================================\n\n");
+    printf("\n------------------------------------------------\n\n");
 }
 
 // funcao principal
