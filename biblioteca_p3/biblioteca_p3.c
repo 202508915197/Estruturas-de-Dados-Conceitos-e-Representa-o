@@ -55,10 +55,6 @@ void imprimirSeparador()
 {
     printf("\n------------------------------------------------\n\n");
 }
-
-// protótipos das funções 
-
-
 // funcao principal
 
 
