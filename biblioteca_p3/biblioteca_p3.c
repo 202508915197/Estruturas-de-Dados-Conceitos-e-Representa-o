@@ -12,6 +12,7 @@ de memória em C.
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 // constantes
 #define MAX_LIVROS 50
@@ -33,6 +34,8 @@ struct emprestimo
 {
     int indicelivro;              // índice do livro emprestado
     char nomeUsuario[TAM_STRING]; // nome do usuário que fez o empréstimo
+    struct livro *livro;          // ponteiro para o livro emprestado
+    time_t dataEmprestimo;        // data do empréstimo
 };
 
 // funcao para limpar o buffer do teclado
@@ -43,6 +46,11 @@ void limparBuffer()
     {
     }
 }
+
+// total de empréstimos realizados, declarado globalmente para ser acessível em todas as funções
+int totalEmprestimos = 0;
+
+
 
 // funcao para limpar a tela
 void limparTela()
@@ -117,7 +125,7 @@ void listarLivros(const struct livro *biblioteca, int totalLivros)
 }
 
 // realizar empréstimo
-void realizarEmprestimo(struct livro *biblioteca, struct emprestimo *emprestimos, int totalEmprestimos)
+void realizarEmprestimo(struct livro *biblioteca, const struct emprestimo *emprestimos, int totalLivros)
 {
     if (totalEmprestimos >= MAX_EMPRESTIMOS)
     { 
@@ -159,7 +167,7 @@ void listarEmprestimos(const struct livro *biblioteca, const struct emprestimo *
     printf("Lista de Empréstimos:\n");
     for (int i = 0; i < totalEmprestimos; i++)
     {
-        printf("%d. %s - %s (%s, Edição %d) - Emprestado para: %s\n", i + 1, emprestimos[i].livro->nome, emprestimos[i].livro->autor, emprestimos[i].livro->editora, emprestimos[i].livro->edicao, emprestimos[i].nomeUsuario);
+  printf("%d. %s - %s (%s, Edição %d) - Emprestado para: %s\n", i + 1, emprestimos[i].livro->nome, emprestimos[i].livro->autor, emprestimos[i].livro->editora, emprestimos[i].livro->edicao, emprestimos[i].nomeUsuario);
     }
 }
 
@@ -227,9 +235,13 @@ int main(){
             printf("Opção inválida. Tente novamente.\n");
         }
     }
-    
+    while (opcao != 5);
+
+    liberarMemoria(biblioteca, emprestimos);
+    {}
 
     // código principal
     return 0;
 }
+
 
