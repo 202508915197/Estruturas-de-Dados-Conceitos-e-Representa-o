@@ -64,13 +64,326 @@ Comente o código explicando o papel de cada função e lógica importante.
 */
 
 //Bibliotecas
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
 //Constantes
+#define MAX_MISSOES 5 // Total de 5 missões diferentes
+#define MAX_TERRITORIOS 10 // Exemplo de mapa com 10 territórios
+#define MAX_JOGADORES 4 // Total de 4 jogadores
+#define MAX_PAIS 30 // Tamanho máximo para o nome do país
+#define MAX_NOME 30 // Tamanho máximo para o nome do jogador
+#define MAX_COR 10 // Tamanho máximo para a cor do território, países podem ter cores iguals, mas cada jogador tem uma cor diferente
+#define MAX_TROPAS 100 // Número máximo de tropas em um território
+#define MAX_TURNOS 10 // Número máximo de turnos para o jogo, para evitar loops infinitos
+#define MAX_MAPA 10 // Exemplo de mapa com 10 territórios
+
+//Vetor de missões
+const char* missoes[MAX_MISSOES] = {
+    "Conquistar 3 territórios seguidos",
+    "Eliminar todas as tropas da cor vermelha",
+    "Controlar 5 territórios diferentes",
+    "Conquistar o território do adversário",
+    "Manter pelo menos 10 tropas em um território"
+};
+
+//Vetor de cores. Total de 4 cores, cada jogador terá uma cor diferente
+const char* cores[MAX_COR] = {
+    "Vermelho",
+    "Azul",
+    "Verde",
+    "Amarelo"
+};
+
+//Vetor de territórios. Exemplo de mapa com 10 territórios
+const char* territorios[MAX_TERRITORIOS] = {
+    "China",
+    "Estados Unidos",
+    "Rússia",
+    "Brasil",
+    "Índia",
+    "Austrália",
+    "Canadá",
+    "França",
+    "Alemanha",
+    "Japão"
+};
+
+//Vetor de jogadores
+const char* jogadores[MAX_JOGADORES] = {
+    "Jogador 1",
+    "Jogador 2",
+    "Jogador 3",
+    "Jogador 4"
+};
 
 //Estruturas
 
+//Definição da struct Territorio
+struct TERRITORIO {
+    char pais[MAX_PAIS];
+    char cor[MAX_COR];
+    int mapa[MAX_MAPA];
+    int tropas[MAX_TROPAS];
+};
+
+//Definição da struct Jogador
+struct JOGADOR {
+    char nome[MAX_NOME];
+    char* missao; // Ponteiro para a missão do jogador
+};
+
+//Definição da struct missão
+struct MISSAO {
+    char descricao[MAX_NOME];
+};
+
 //Funções
 
-// protótipos de funções
+//Função para imprimir separador visual
+void imprimirSeparador() {
+    printf("\n================================================\n\n");
+} 
+
+//Função para limpar a tela
+void limparTela() {
+    system("clear");
+}
+
+//Função para exibir o mapa do jogo
+void exibirMapa(struct TERRITORIO* territorios, int totalTerritorios) {
+    printf("Mapa do Jogo:\n");
+    for (int i = 0; i < totalTerritorios; i++) {
+        printf("Território: %s | Cor: %s | Tropas: %d\n", territorios[i].pais, territorios[i].cor, territorios[i].tropas);
+    }
+}
+
+//Função para exibir a missão do jogador
+void exibirMissao(struct JOGADOR* jogador) {
+    printf("Missão de %s: %s\n", jogador->nome, jogador->missao);
+}
+
+//Função para atribuir uma missão ao jogador
+void atribuirMissao(struct JOGADOR* jogador, const char* missao) {
+    jogador->missao = malloc(strlen(missao) + 1);
+    strcpy(jogador->missao, missao);
+}
+
+//Função para verificar se a missão do jogador foi cumprida (lógica simples para exemplo)
+int verificarMissao(struct JOGADOR* jogador, struct TERRITORIO* territorios, int totalTerritorios) {
+    // Lógica simples: verificar se o jogador controla pelo menos 3 territórios seguidos
+    int contagem = 0;
+    for (int i = 0; i < totalTerritorios; i++) {
+        if (strcmp(territorios[i].cor, jogador->nome) == 0) {
+            contagem++;
+            if (contagem >= 3) {
+                return 1; // Missão cumprida
+            }
+        } else {
+            contagem = 0; // Resetar contagem se encontrar um território de outra cor
+        }
+    }
+    return 0; // Missão não cumprida
+}
+
+//Função para simular um ataque entre territórios
+void atacar(struct TERRITORIO* atacante, struct TERRITORIO* defensor) {
+    int dadoAtacante = rand() % 6 + 1; // Valor entre 1 e 6
+    int dadoDefensor = rand() % 6 + 1; // Valor entre 1 e 6
+    printf("%s ataca %s! (Dado Atacante: %d, Dado Defensor: %d)\n", atacante->pais, defensor->pais, dadoAtacante, dadoDefensor);
+    if (dadoAtacante > dadoDefensor) {
+        printf("Atacante vence! %s conquista %s\n", atacante->pais, defensor->pais);
+        strcpy(defensor->cor, atacante->cor); // Transferir cor
+        defensor->tropas = atacante->tropas / 2; // Transferir metade das tropas
+        atacante->tropas /= 2; // Atacante perde metade
+    } else {
+        printf("Defensor vence! %s mantém o controle de %s\n", defensor->pais, defensor->pais);
+        atacante->tropas--; // Atacante perde uma tropa
+    }
+}
+
+//Função para liberar a memória alocada dinamicamente
+void liberarMemoria(struct JOGADOR* jogadores, int totalJogadores) {
+    for (int i = 0; i < totalJogadores; i++) {
+        free(jogadores[i].missao); // Liberar memória da missão de cada jogador
+    }
+}
+
+//Função para alocar memória de forma dinâmica para os jogadores
+struct JOGADOR* criarJogadores(int totalJogadores) {
+    struct JOGADOR* jogadores = malloc(totalJogadores * sizeof(struct JOGADOR));
+    if (jogadores == NULL) {
+        fprintf(stderr, "Erro ao alocar memória para os jogadores.\n");
+        exit(1);
+    }
+    return jogadores;
+}
+
+//Função para alocar memória de forma dinâmica para os territórios
+struct TERRITORIO* criarTerritorios(int totalTerritorios) {
+    struct TERRITORIO* territorios = malloc(totalTerritorios * sizeof(struct TERRITORIO));
+    if (territorios == NULL) {
+        fprintf(stderr, "Erro ao alocar memória para os territórios.\n");
+        exit(1);
+    }
+    return territorios;
+}
+
+//Função para alocar de forma dinâmica para as missões
+struct MISSAO* criarMissões(int totalMissões) {
+    struct MISSAO* missões = malloc(totalMissões * sizeof(struct MISSAO));
+    if (missões == NULL) {
+        fprintf(stderr, "Erro ao alocar memória para as missões.\n");
+        exit(1);
+    }
+    return missões;
+}
+
+//Função para atualização de campos após um ataque
+void atualizarCampos(struct TERRITORIO* atacante, struct TERRITORIO* defensor) {
+    if (strcmp(atacante->cor, defensor->cor) == 0) {
+        defensor->tropas += atacante->tropas / 2; // Transferir metade das tropas para o defensor
+        atacante->tropas /= 2; // Atacante perde metade das tropas
+    }
+}
+
+//Função para validar ataques, garantindo que o jogador só possa atacar territórios inimigos
+int validarAtaque(struct JOGADOR* jogador, struct TERRITORIO* atacante, struct TERRITORIO* defensor) {
+    if (strcmp(atacante->cor, jogador->nome) != 0) {
+        printf("Você só pode atacar com territórios que controla!\n");
+        return 0; // Ataque inválido
+    }
+    if (strcmp(defensor->cor, jogador->nome) == 0) {
+        printf("Você não pode atacar seus próprios territórios!\n");
+        return 0; // Ataque inválido
+    }
+    return 1; // Ataque válido
+}
+
+//Função para exibir o status do jogo ao final de cada turno
+void exibirStatus(struct JOGADOR* jogadores, int totalJogadores, struct TERRITORIO* territorios, int totalTerritorios) {
+    printf("Status do Jogo:\n");
+    for (int i = 0; i < totalJogadores; i++) {
+        printf("%s - Missão: %s\n", jogadores[i].nome, jogadores[i].missao);
+    }
+    exibirMapa(territorios, totalTerritorios);
+}
+
+//Função para transferir tropas entre territórios após um ataque bem-sucedido
+void transferirTropas(struct TERRITORIO* atacante, struct TERRITORIO* defensor) {
+    if (strcmp(atacante->cor, defensor->cor) == 0) {
+        defensor->tropas += atacante->tropas / 2; // Transferir metade das tropas para o defensor
+        atacante->tropas /= 2; // Atacante perde metade das tropas
+    }
+}
+
+//Função para passagem por valor para exibição da missão
+void exibirMissaoValor(char* missao) {
+    printf("Missão: %s\n", missao);
+}
+
+//Função para passagem por referência para atribuição da missão
+void atribuirMissaoReferencia(char** missao, const char* novaMissao) {
+    *missao = malloc(strlen(novaMissao) + 1);
+    strcpy(*missao, novaMissao);
+}
+
+//Função para sorteio de missão para o jogador
+void sortearMissao(struct JOGADOR* jogador) {
+    int indice = rand() % MAX_MISSOES; // Sorteia um índice para a missão
+    atribuirMissao(jogador, missoes[indice]); // Atribui a missão sorteada ao jogador
+}
+
+//Função para verificar se algum jogador cumpriu sua missão ao final de cada turno
+void verificarVencedor(struct JOGADOR* jogadores, int totalJogadores, struct TERRITORIO* territorios, int totalTerritorios) {
+    for (int i = 0; i < totalJogadores; i++) {
+        if (verificarMissao(&jogadores[i], territorios, totalTerritorios)) {
+            printf("Parabéns, %s! Você cumpriu sua missão e venceu o jogo!\n", jogadores[i].nome);
+            exit(0); // Encerra o jogo ao encontrar um vencedor
+        }
+    }
+}
+
+//Função para salvar partidas, você pode implementar funções para salvar e carregar o estado do jogo usando arquivos. Isso pode incluir a escrita dos dados dos jogadores, territórios e missões em um arquivo de texto ou binário, e a leitura desses dados para restaurar o estado do jogo posteriormente.
+void salvarPartida(struct JOGADOR* jogadores, int totalJogadores, struct TERRITORIO* territorios, int totalTerritorios) {
+    //Salvar o estado do jogo em um arquivo de texto
+    //nome do arquivo: partida_01.txt, partida_02.txt, etc. Você pode usar um contador para criar arquivos com nomes únicos a cada vez que salvar a partida.
+    FILE* arquivo = fopen("partida_01.txt", "w");
+    if (arquivo == NULL) {
+        fprintf(stderr, "Erro ao abrir o arquivo para salvar a partida.\n");
+        return;
+    }
+    //Escrever os dados dos jogadores no arquivo
+    for (int i = 0; i < totalJogadores; i++) {
+        fprintf(arquivo, "Jogador: %s\n", jogadores[i].nome);
+        fprintf(arquivo, "Missão: %s\n", jogadores[i].missao);
+    }
+    //Escrever os dados dos territórios no arquivo
+    for (int i = 0; i < totalTerritorios; i++) {
+        fprintf(arquivo, "Território: %s | Cor: %s | Tropas: %d\n", territorios[i].pais, territorios[i].cor, territorios[i].tropas);
+    }
+    fclose(arquivo);
+}
+
+//Função para carregar partidas, você pode implementar uma função para ler o estado do jogo a partir de um arquivo e restaurar os dados dos jogadores, territórios e missões. Isso pode envolver a leitura dos dados do arquivo e a atribuição desses dados às estruturas correspondentes no programa.
+void carregarPartida(struct JOGADOR* jogadores, int totalJogadores, struct TERRITORIO* territorios, int totalTerritorios) {
+    //Carregar o estado do jogo a partir de um arquivo de texto
+    FILE* arquivo = fopen("partida_01.txt", "r");
+    if (arquivo == NULL) {
+        fprintf(stderr, "Erro ao abrir o arquivo para carregar a partida.\n");
+        return;
+    }
+    // Ler os dados dos jogadores do arquivo
+    for (int i = 0; i < totalJogadores; i++) {
+        fscanf(arquivo, "Jogador: %s\n", jogadores[i].nome);
+        fscanf(arquivo, "Missão: %s\n", jogadores[i].missao);
+    }
+    // Ler os dados dos territórios do arquivo
+    for (int i = 0; i < totalTerritorios; i++) {
+        fscanf(arquivo, "Território: %s | Cor: %s | Tropas: %d\n", territorios[i].pais, territorios[i].cor, &territorios[i].tropas);
+    }
+    fclose(arquivo);
+}
+
+//Função para inicializar o jogo, configurando os jogadores, territórios e missões
+void inicializarJogo(struct JOGADOR* jogadores, int totalJogadores, struct TERRITORIO* territorios, int totalTerritorios) {
+    //Configurar os jogadores
+    for (int i = 0; i < totalJogadores; i++) {
+        strcpy(jogadores[i].nome, jogadores[i].nome); // Atribuir o nome do jogador
+        sortearMissao(&jogadores[i]); // Sortear e atribuir uma missão para cada jogador
+    }
+    //Configurar os territórios
+    for (int i = 0; i < totalTerritorios; i++) {
+        strcpy(territorios[i].pais, territorios[i].pais); // Atribuir o nome do país ao território
+        strcpy(territorios[i].cor, cores[i % MAX_COR]); // Atribuir uma cor ao território (pode ser repetida)
+        territorios[i].tropas = rand() % MAX_TROPAS + 1; // Atribuir um número aleatório de tropas para o território
+    }
+}
+
+//Protótipos das funções
+void imprimirSeparador();
+void limparTela();
+void exibirMapa(struct TERRITORIO* territorios, int totalTerritorios);
+void exibirMissao(struct JOGADOR* jogador);
+void atribuirMissao(struct JOGADOR* jogador, const char* missao);
+int verificarMissao(struct JOGADOR* jogador, struct TERRITORIO* territorios, int totalTerritorios);
+void atacar(struct TERRITORIO* atacante, struct TERRITORIO* defensor);
+void liberarMemoria(struct JOGADOR* jogadores, int totalJogadores);
+struct JOGADOR* criarJogadores(int totalJogadores);
+struct TERRITORIO* criarTerritorios(int totalTerritorios);
+struct MISSAO* criarMissões(int totalMissões);
+void atualizarCampos(struct TERRITORIO* atacante, struct TERRITORIO* defensor);
+int validarAtaque(struct JOGADOR* jogador, struct TERRITORIO* atacante, struct TERRITORIO* defensor);
+void exibirStatus(struct JOGADOR* jogadores, int totalJogadores, struct TERRITORIO* territorios, int totalTerritorios);
+void transferirTropas(struct TERRITORIO* atacante, struct TERRITORIO* defensor);
+void exibirMissaoValor(char* missao);
+void atribuirMissaoReferencia(char** missao, const char* novaMissao);
+void sortearMissao(struct JOGADOR* jogador);
+void verificarVencedor(struct JOGADOR* jogadores, int totalJogadores, struct TERRITORIO* territorios, int totalTerritorios);
+void salvarPartida(struct JOGADOR* jogadores, int totalJogadores, struct TERRITORIO* territorios, int totalTerritorios);
+void carregarPartida(struct JOGADOR* jogadores, int totalJogadores, struct TERRITORIO* territorios, int totalTerritorios);
+void inicializarJogo(struct JOGADOR* jogadores, int totalJogadores, struct TERRITORIO* territorios, int totalTerritorios);
 
 //função principal
