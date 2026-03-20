@@ -119,6 +119,26 @@ const char* jogadores[MAX_JOGADORES] = {
     "Jogador 4"
 };
 
+//Vetor do menu do jogo
+const char* menu[MAX_TURNOS] = {
+    "1. Atacar",
+    "2. Exibir Mapa",
+    "3. Exibir Missão",
+    "4. Salvar Partida",
+    "5. Carregar Partida",
+    "6. Sair do Jogo"
+};
+
+//Vetor de opções do menu
+const char* opcoesMenu[MAX_TURNOS] = {
+    "Atacar",
+    "Exibir Mapa",
+    "Exibir Missão",
+    "Salvar Partida",
+    "Carregar Partida",
+    "Sair do Jogo"
+};
+
 //Estruturas
 
 //Definição da struct Territorio
@@ -140,6 +160,7 @@ struct MISSAO {
     char descricao[MAX_NOME];
 };
 
+
 //Funções
 
 //Função para imprimir separador visual
@@ -152,6 +173,23 @@ void limparTela() {
     system("clear");
 }
 
+//Função para exibir o menu do jogo com as opções disponíveis para o jogador
+void exibirMenu() {
+    imprimirSeparador();
+    printf(".          WAR       \n");  
+	imprimirSeparador();
+    printf ("1. Atacar\n");
+    printf ("2. Exibir Mapa\n");
+    printf ("3. Exibir Missão\n");
+    printf ("4. Salvar Partida\n");
+    printf ("5. Carregar Partida\n");
+    printf ("6. Sair do Jogo\n");
+    imprimirSeparador();
+    printf("Digite o número da opção desejada: ");
+    imprimirSeparador();
+}
+
+  
 //Função para exibir o mapa do jogo
 void exibirMapa(struct TERRITORIO* territorios, int totalTerritorios) {
     printf("Mapa do Jogo:\n");
@@ -362,6 +400,27 @@ void inicializarJogo(struct JOGADOR* jogadores, int totalJogadores, struct TERRI
     }
 }
 
+//Função para a lógica do jogo, onde você pode implementar os turnos de ataque, verificação de missões e exibição do status do jogo
+void logicaDoJogo(struct JOGADOR* jogadores, int totalJogadores, struct TERRITORIO* territorios, int totalTerritorios) {
+    for (int turno = 0; turno < MAX_TURNOS; turno++) {
+        printf("Turno %d\n", turno + 1);
+        for (int i = 0; i < totalJogadores; i++) {
+            printf("Vez de %s\n", jogadores[i].nome);
+            //Aqui você pode implementar a lógica para o jogador escolher um território para atacar, validar o ataque, realizar o ataque e verificar se a missão foi cumprida ao final do turno.
+            //Exemplo de lógica para ataque (você pode expandir isso para permitir que o jogador escolha os territórios de ataque e defesa):
+            int atacanteIndex = rand() % totalTerritorios; // Índice aleatório para o território atacante
+            int defensorIndex = rand() % totalTerritorios; // Índice aleatório para o território defensor
+            if (validarAtaque(&jogadores[i], &territorios[atacanteIndex], &territorios[defensorIndex])) {
+                atacar(&territorios[atacanteIndex], &territorios[defensorIndex]);
+                atualizarCampos(&territorios[atacanteIndex], &territorios[defensorIndex]);
+            }
+            verificarVencedor(jogadores, totalJogadores, territorios, totalTerritorios);
+            exibirStatus(jogadores, totalJogadores, territorios, totalTerritorios);
+        }
+    }
+}
+
+
 //Protótipos das funções
 void imprimirSeparador();
 void limparTela();
@@ -385,5 +444,21 @@ void verificarVencedor(struct JOGADOR* jogadores, int totalJogadores, struct TER
 void salvarPartida(struct JOGADOR* jogadores, int totalJogadores, struct TERRITORIO* territorios, int totalTerritorios);
 void carregarPartida(struct JOGADOR* jogadores, int totalJogadores, struct TERRITORIO* territorios, int totalTerritorios);
 void inicializarJogo(struct JOGADOR* jogadores, int totalJogadores, struct TERRITORIO* territorios, int totalTerritorios);
+void logicaDoJogo(struct JOGADOR* jogadores, int totalJogadores, struct TERRITORIO* territorios, int totalTerritorios);
+void exibirMenu();
 
 //função principal
+int main() {
+    srand(time(NULL)); // Inicializa a semente para números aleatórios
+
+    struct JOGADOR* jogadores = criarJogadores(MAX_JOGADORES);
+    struct TERRITORIO* territorios = criarTerritorios(MAX_TERRITORIOS);
+    struct MISSAO* missoes = criarMissões(MAX_MISSOES);
+    inicializarJogo(jogadores, MAX_JOGADORES, territorios, MAX_TERRITORIOS);
+    exibirMenu();
+    logicaDoJogo(jogadores, MAX_JOGADORES, territorios, MAX_TERRITORIOS);
+    liberarMemoria(jogadores, MAX_JOGADORES);
+    free(territorios);
+    free(missoes);
+    return 0;
+}
