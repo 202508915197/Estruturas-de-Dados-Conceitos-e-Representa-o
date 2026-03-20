@@ -420,6 +420,51 @@ void logicaDoJogo(struct JOGADOR* jogadores, int totalJogadores, struct TERRITOR
     }
 }
 
+//Ponteiros para as funções, para garantir que elas sejam reconhecidas antes de serem chamadas na função main. Isso é importante para evitar erros de compilação relacionados a funções não declaradas.
+
+//case 1
+switch (opcoesMenu)
+{
+case 1:
+    //Lógica para o ataque, onde o jogador escolhe um território para atacar e outro
+	imprimirSeparador();
+    printf("         REALIZAÇÃO DE ATAQUE ENTRE TERRITÓRIOS\n");
+    imprimirSeparador();
+    if (totalTerritorios < 2) {
+        printf("É necessário cadastrar pelo menos 2 territórios para realizar um ataque.\n");
+    } else {
+        printf("Territórios disponíveis:\n");
+        for (int i = 0; i < totalTerritorios; i++) {
+            printf("[%d] Nome: %s, Cor: %s, Tropas: %d\n", i + 1, mapa[i].nome, mapa[i].cor, mapa[i].tropas);
+        }
+        printf("\nDigite o número do território atacante: ");
+        scanf("%d", &indiceAtacante);
+        limparBuffer(); // Limpa o buffer após ler a opção
+        printf("Digite o número do território defensor: ");
+        scanf("%d", &indiceDefensor);
+        limparBuffer(); // Limpa o buffer após ler a opção
+    break;
+}
+}
+
+//case 2
+switch (opcoesMenu)
+{case 2:
+                imprimirSeparador();
+                printf("         EXIBIÇÃO DO MAPA DO JOGO\n");
+                imprimirSeparador();
+                if (totalTerritorios == 0) {
+                    printf("Nenhum território cadastrado. O mapa está vazio.\n");
+                } else {
+                    printf("Mapa do Jogo:\n");
+                    for (int i = 0; i < totalTerritorios; i++) {
+                        printf("[%d] Nome: %s, Cor: %s, Tropas: %d\n", i + 1, mapa[i].nome, mapa[i].cor, mapa[i].tropas);
+                    }
+                }
+                printf("Pressione ENTER para continuar...\n");
+                getchar();
+                break;
+}
 
 //Protótipos das funções
 void imprimirSeparador();
@@ -455,7 +500,15 @@ int main() {
     struct TERRITORIO* territorios = criarTerritorios(MAX_TERRITORIOS);
     struct MISSAO* missoes = criarMissões(MAX_MISSOES);
     inicializarJogo(jogadores, MAX_JOGADORES, territorios, MAX_TERRITORIOS);
+    //Aqui você pode chamar a função para exibir o menu e iniciar a lógica do jogo
     exibirMenu();
+    // case 1, case 2, case 3, etc. para as opções do menu, onde você pode implementar as ações correspondentes para cada opção, como atacar, exibir o mapa, exibir a missão, salvar a partida, carregar a partida e sair do jogo.
+    
+   
+
+    //cadastro de territórios, listagem de territórios, escolha de territórios para guerra, etc. Você pode implementar um loop para permitir que os jogadores escolham as opções do menu e interajam com o jogo.
+
+    //Registro da lógica do jogo, onde você pode implementar a interação com o menu e as ações dos jogadores
     logicaDoJogo(jogadores, MAX_JOGADORES, territorios, MAX_TERRITORIOS);
     liberarMemoria(jogadores, MAX_JOGADORES);
     free(territorios);
